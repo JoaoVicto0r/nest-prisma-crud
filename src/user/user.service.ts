@@ -9,10 +9,12 @@ export class UserService {
 
   create(data: CreateUserDto) {
   return this.prisma.user.create({
-    data: data as any, // Teste rápido para ver se o erro desaparece
+    data: {
+      name: data.name,
+      email: data.email,
+      password: data.password, // <-- esse campo precisa existir no schema.prisma
+    },
   });
-
- 
 }
 
   findAll() {
