@@ -8,15 +8,11 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   create(data: CreateUserDto) {
-  const userCreateArgs: Prisma.UserCreateArgs = {
-    data: {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    },
-  };
+  return this.prisma.user.create({
+    data: data as any, // Teste rápido para ver se o erro desaparece
+  });
 
-  return this.prisma.user.create(userCreateArgs);
+ 
 }
 
   findAll() {
