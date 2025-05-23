@@ -9,6 +9,6 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @MinLength(6, { message: 'Senha deve ter no mínimo 6 caracteres' })
-  senha: string;
+  @IsNotEmpty({ message: 'A senha é obrigatória' })
+  password: string;
 }
