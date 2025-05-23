@@ -8,23 +8,33 @@ datasource db {
 }
 
 model User {
-  email String  @unique
   id    Int     @id @default(autoincrement())
+  email String  @unique
   name  String?
   posts Post[]
+
+  depositos  Deposito[]
+  ibans      IBAN[]
+  transacoes Transacao[]
+
+  userPlanos UserPlano[]
+  userRotas  UserRota[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Post {
-  authorId  Int?
-  content   String?
   id        Int     @id @default(autoincrement())
-  published Boolean @default(false)
   title     String
+  content   String?
+  published Boolean @default(false)
+  authorId  Int?
   author    User?   @relation(fields: [authorId], references: [id])
 }
 
 model Cat {
-  id    Int    @id @default(autoincrement())
+  id    Int     @id @default(autoincrement())
   name  String
   age   Int?
   alive Boolean @default(true)
@@ -36,4 +46,83 @@ model Dog {
   color  String
   height Int?
   weight Int?
+}
+
+model Deposito {
+  id     Int      @id @default(autoincrement())
+  valor  Float
+  userId Int
+  user   User     @relation(fields: [userId], references: [id])
+  data   DateTime @default(now())
+}
+
+model Produto {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  descricao String?
+  preco     Float
+  estoque   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IBAN {
+  id        Int      @id @default(autoincrement())
+  codigo    String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  banco     String
+  agencia   String
+  conta     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transacao {
+  id        Int      @id @default(autoincrement())
+  tipo      String // ex: 'credito', 'debito'
+  valor     Float
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  data      DateTime @default(now())
+  descricao String?
+}
+
+model Plano {
+  id         Int         @id @default(autoincrement())
+  nome       String
+  preco      Float
+  descricao  String?
+  userPlanos UserPlano[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Rota {
+  id        Int        @id @default(autoincrement())
+  nome      String
+  destino   String
+  userRotas UserRota[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model UserPlano {
+  userId  Int
+  planoId Int
+
+  user  User  @relation(fields: [userId], references: [id])
+  plano Plano @relation(fields: [planoId], references: [id])
+
+  @@id([userId, planoId])
+}
+
+model UserRota {
+  userId Int
+  rotaId Int
+
+  user User @relation(fields: [userId], references: [id])
+  rota Rota @relation(fields: [rotaId], references: [id])
+
+  @@id([userId, rotaId])
 }
