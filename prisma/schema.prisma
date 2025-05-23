@@ -8,21 +8,18 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  password    String
-  posts Post[]
-
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
+  name       String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  password   String
   depositos  Deposito[]
   ibans      IBAN[]
+  Post       Post[]
   transacoes Transacao[]
-
   userPlanos UserPlano[]
   userRotas  UserRota[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Post {
@@ -31,7 +28,7 @@ model Post {
   content   String?
   published Boolean @default(false)
   authorId  Int?
-  author    User?   @relation(fields: [authorId], references: [id])
+  User      User?   @relation(fields: [authorId], references: [id])
 }
 
 model Cat {
@@ -53,8 +50,8 @@ model Deposito {
   id     Int      @id @default(autoincrement())
   valor  Float
   userId Int
-  user   User     @relation(fields: [userId], references: [id])
   data   DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id])
 }
 
 model Produto {
@@ -71,22 +68,22 @@ model IBAN {
   id        Int      @id @default(autoincrement())
   codigo    String   @unique
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   banco     String
   agencia   String
   conta     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Transacao {
   id        Int      @id @default(autoincrement())
-  tipo      String // ex: 'credito', 'debito'
+  tipo      String
   valor     Float
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   data      DateTime @default(now())
   descricao String?
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Plano {
@@ -94,26 +91,25 @@ model Plano {
   nome       String
   preco      Float
   descricao  String?
-  userPlanos UserPlano[]
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  userPlanos UserPlano[]
 }
 
 model Rota {
   id        Int        @id @default(autoincrement())
   nome      String
   destino   String
-  userRotas UserRota[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  userRotas UserRota[]
 }
 
 model UserPlano {
   userId  Int
   planoId Int
-
-  user  User  @relation(fields: [userId], references: [id])
-  plano Plano @relation(fields: [planoId], references: [id])
+  plano   Plano @relation(fields: [planoId], references: [id])
+  user    User  @relation(fields: [userId], references: [id])
 
   @@id([userId, planoId])
 }
@@ -121,9 +117,14 @@ model UserPlano {
 model UserRota {
   userId Int
   rotaId Int
-
-  user User @relation(fields: [userId], references: [id])
-  rota Rota @relation(fields: [rotaId], references: [id])
+  rota   Rota @relation(fields: [rotaId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
 
   @@id([userId, rotaId])
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
 }
